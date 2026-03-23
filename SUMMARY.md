@@ -46,7 +46,7 @@ Successfully transformed the BLT-Hackathon repository into a complete, self-host
 ## Security Features
 
 ✅ **XSS Protection** - All user content properly escaped
-✅ **Bearer Token Auth** - Modern GitHub API authentication  
+✅ **Bearer Token Auth** - Modern GitHub API authentication
 ✅ **Token Validation** - Warns on invalid token formats
 ✅ **HTTPS Only** - All external resources secure
 ✅ **Safe DOM Updates** - No untrusted innerHTML

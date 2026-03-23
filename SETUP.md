@@ -163,7 +163,7 @@ jobs:
 
 Once deployed, share your hackathon dashboard:
 - 📱 Social media
-- 📧 Email newsletters  
+- 📧 Email newsletters
 - 💬 Community forums
 - 📝 Blog posts
 
