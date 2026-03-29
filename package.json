@@ -1,0 +1,17 @@
+{
+  "name": "blt-hackathons",
+  "version": "1.0.0",
+  "description": "A self-hosted GitHub Pages hackathon platform that lets you conduct a hackathon on your project with **charts**, **leaderboards**, and **prizes**!",
+  "main": "config.example.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2"
+  }
+}

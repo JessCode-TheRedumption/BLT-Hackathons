@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; object-src 'none'; base-uri 'self'">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BLT Hackathons - Open Source Hackathon Platform</title>
     <meta name="description" content="Browse and participate in open source hackathons">
+    <!-- build-stamp: tailwind-cdn-removed-20260329 -->
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Precompiled Tailwind CSS (production-safe; avoids the runtime CDN compiler) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -17,158 +18,72 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
         .hackathon-card {
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
         }
-        .hackathon-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        /* Mobile-specific styles */
         @media (max-width: 640px) {
-            .btn-text {
-                display: none;
-            }
-        }
-        @media (min-width: 641px) {
-            .btn-icon-only {
-                display: none;
-            }
+            .btn-text { display: none; }
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg">
+<body class="bg-gray-50 antialiased">
+    <nav class="bg-white shadow-md sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
                     <i class="fas fa-trophy text-red-600 text-2xl mr-3"></i>
                     <h1 class="text-xl font-bold text-gray-900" id="site-title">BLT Hackathons</h1>
                 </div>
-                <div class="flex items-center space-x-2 sm:space-x-4">
-                    <a href="https://github.com/OWASP-BLT/BLT-Hackathons/issues/new?template=create-hackathon.yml"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       class="px-3 py-2 sm:px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center space-x-2"
-                       aria-label="Create a new hackathon">
-                        <i class="fas fa-plus"></i>
-                        <span class="btn-text">Create Hackathon</span>
-                    </a>
+                <div class="flex items-center space-x-2">
                     <a href="https://github.com/OWASP-BLT/BLT-Hackathons" target="_blank" 
-                       rel="noopener noreferrer"
-                       class="px-3 py-2 sm:px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium flex items-center space-x-2"
-                       aria-label="Contribute on GitHub">
+                       class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium flex items-center space-x-2 shadow-sm">
                         <i class="fab fa-github"></i>
-                        <span class="btn-text">Contribute on GitHub</span>
-                    </a>
-                    <a href="https://github.com/OWASP-BLT" target="_blank" 
-                       rel="noopener noreferrer"
-                       class="text-gray-600 hover:text-gray-900 hidden sm:block">
-                        <i class="fab fa-github text-2xl"></i>
+                        <span class="btn-text">GitHub</span>
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-red-600 to-red-800 text-white py-8 sm:py-12 lg:py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4" id="hero-title">Open Source Hackathons</h2>
-            <p class="text-base sm:text-lg lg:text-xl mb-4 sm:mb-6" id="hero-description">
-                Join our community hackathons and contribute to open source projects
+    <div class="bg-gradient-to-br from-red-600 to-red-900 text-white py-12 lg:py-20">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="text-3xl lg:text-5xl font-extrabold mb-4" id="hero-title">Open Source Hackathons</h2>
+            <p class="text-lg lg:text-2xl opacity-90 max-w-2xl mx-auto" id="hero-description">
+                Join our community and contribute to high-impact open source projects.
             </p>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Hackathons Grid -->
-        <div class="mb-12">
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8">
-                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-0">Available Hackathons</h2>
-                <div class="flex flex-wrap gap-2 sm:gap-4">
-                    <button onclick="filterHackathons('all')" 
-                            class="filter-btn px-3 sm:px-4 py-2 rounded-lg bg-red-600 text-white font-medium text-sm sm:text-base"
-                            data-filter="all">
-                        All
-                    </button>
-                    <button onclick="filterHackathons('ongoing')" 
-                            class="filter-btn px-3 sm:px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 text-sm sm:text-base"
-                            data-filter="ongoing">
-                        Ongoing
-                    </button>
-                    <button onclick="filterHackathons('upcoming')" 
-                            class="filter-btn px-3 sm:px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 text-sm sm:text-base"
-                            data-filter="upcoming">
-                        Upcoming
-                    </button>
-                    <button onclick="filterHackathons('ended')" 
-                            class="filter-btn px-3 sm:px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 text-sm sm:text-base"
-                            data-filter="ended">
-                        Ended
-                    </button>
-                </div>
-            </div>
-            
-            <div id="hackathons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-                <!-- Hackathon cards will be inserted here -->
-                <div class="col-span-full text-center py-12">
-                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-                    <p class="mt-4 text-gray-600">Loading hackathons...</p>
-                </div>
-            </div>
-            
-            <div id="no-hackathons" class="hidden text-center py-12">
-                <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
-                <p class="text-xl text-gray-600">No hackathons found</p>
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-6">
+            <h2 class="text-2xl font-bold text-gray-900">Available Hackathons</h2>
+            <div class="flex flex-wrap gap-2 p-1 bg-gray-100 rounded-xl">
+                <button onclick="filterHackathons('all')" class="filter-btn px-4 py-2 rounded-lg bg-red-600 text-white font-semibold text-sm" data-filter="all">All</button>
+                <button onclick="filterHackathons('ongoing')" class="filter-btn px-4 py-2 rounded-lg text-gray-600 font-semibold text-sm hover:bg-gray-200" data-filter="ongoing">Ongoing</button>
+                <button onclick="filterHackathons('upcoming')" class="filter-btn px-4 py-2 rounded-lg text-gray-600 font-semibold text-sm hover:bg-gray-200" data-filter="upcoming">Upcoming</button>
+                <button onclick="filterHackathons('ended')" class="filter-btn px-4 py-2 rounded-lg text-gray-600 font-semibold text-sm hover:bg-gray-200" data-filter="ended">Ended</button>
             </div>
         </div>
-
-        <!-- About Section -->
-        <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8 mb-8">
-            <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-900">About BLT Hackathons</h2>
-            <div class="prose max-w-none text-gray-700">
-                <p class="mb-4">
-                    Welcome to the BLT (Bug Logging Tool) Hackathon platform! We host regular hackathons 
-                    to encourage contributions to our open source projects and build a stronger community.
-                </p>
-                <p class="mb-4">
-                    Each hackathon features:
-                </p>
-                <ul class="list-disc list-inside mb-4 space-y-2">
-                    <li>Real-time leaderboards tracking contributions</li>
-                    <li>Multiple repositories to contribute to</li>
-                    <li>Prizes and recognition for top contributors</li>
-                    <li>A welcoming community of developers</li>
-                </ul>
-                <p>
-                    Pick a hackathon above to get started, or check out our 
-                    <a href="https://github.com/OWASP-BLT" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:underline">
-                        GitHub organization
-                    </a> 
-                    to learn more about our projects.
-                </p>
+        
+        <div id="hackathons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div class="col-span-full text-center py-20">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-red-600"></div>
+                <p class="mt-4 text-gray-500">Fetching hackathon data...</p>
             </div>
+        </div>
+        
+        <div id="no-hackathons" class="hidden text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+            <i class="fas fa-calendar-times text-6xl text-gray-200 mb-4"></i>
+            <p class="text-xl text-gray-500 font-medium">No hackathons found</p>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-gray-600">
-            <div id="github-api-info" class="mb-3 text-gray-500"></div>
-            <p>
-                Powered by 
-                <a href="https://github.com/OWASP-BLT/BLT-Hackathons" 
-                   class="text-red-600 hover:underline" target="_blank" rel="noopener noreferrer">
-                    BLT-Hackathons
-                </a>
-            </p>
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div id="github-api-info" class="mb-6 p-4 bg-gray-800 rounded-xl inline-block"></div>
+            <p class="text-gray-500 text-sm">&copy; 2026 OWASP Foundation. Managed by BLT Project Team.</p>
         </div>
     </footer>
 
-    <!-- JavaScript -->
     <script src="js/hackathons-config.js"></script>
     <script src="js/index.js"></script>
 </body>

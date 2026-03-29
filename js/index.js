@@ -1,6 +1,6 @@
 /**
  * Index Page Logic
- * Displays list of all hackathons
+ * Displays list of all hackathons with robust error handling
  */
 
 class HackathonIndex {
@@ -8,6 +8,7 @@ class HackathonIndex {
         this.config = config;
         this.currentFilter = 'all';
         this.hackathonStats = {};
+        this.loadedAt = null;
     }
 
     /**
@@ -19,13 +20,16 @@ class HackathonIndex {
         
         // Update site title
         if (global.siteName) {
-            document.getElementById('site-title').textContent = global.siteName;
-            document.getElementById('hero-title').textContent = global.siteName;
+            const siteTitle = document.getElementById('site-title');
+            const heroTitle = document.getElementById('hero-title');
+            if(siteTitle) siteTitle.textContent = global.siteName;
+            if(heroTitle) heroTitle.textContent = global.siteName;
             document.title = global.siteName;
         }
 
         if (global.siteDescription) {
-            document.getElementById('hero-description').textContent = global.siteDescription;
+            const heroDesc = document.getElementById('hero-description');
+            if(heroDesc) heroDesc.textContent = global.siteDescription;
         }
 
         // Load stats for all hackathons, then render
@@ -40,30 +44,33 @@ class HackathonIndex {
         const fetches = (this.config.hackathons || []).map(async hackathon => {
             try {
                 const response = await fetch(`hackathon-data/${hackathon.slug}-summary.json`);
-                if (response.ok) {
-                    const summary = await response.json();
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const summary = await response.json();
 
-                    // Calculate days active: elapsed days from start up to today (capped at end date)
-                    const startDate = new Date(hackathon.startTime);
-                    const endDate = new Date(hackathon.endTime);
-                    const now = new Date();
-                    const effectiveEnd = now < endDate ? now : endDate;
-                    const daysActive = now < startDate
-                        ? 0
-                        : Math.floor((effectiveEnd - startDate) / (1000 * 60 * 60 * 24));
+                // Calculate days active
+                const startDate = new Date(hackathon.startTime);
+                const endDate = new Date(hackathon.endTime);
+                const now = new Date();
+                const effectiveEnd = now < endDate ? now : endDate;
+                const daysActive = now < startDate
+                    ? 0
+                    : Math.floor((effectiveEnd - startDate) / (1000 * 60 * 60 * 24));
 
-                    this.hackathonStats[hackathon.slug] = {
-                        participantCount: summary.participantCount || 0,
-                        totalPRs: summary.totalPRs || 0,
-                        mergedPRs: summary.mergedPRs || 0,
-                        totalIssues: summary.totalIssues || 0,
-                        repositories: summary.repositories || 0,
-                        topContributors: summary.topContributors || [],
-                        daysActive,
-                    };
-                }
+                this.hackathonStats[hackathon.slug] = {
+                    participantCount: summary.participantCount || 0,
+                    totalPRs: summary.totalPRs || 0,
+                    mergedPRs: summary.mergedPRs || 0,
+                    totalIssues: summary.totalIssues || 0,
+                    repositories: summary.repositories || 0,
+                    topContributors: summary.topContributors || [],
+                    daysActive,
+                    error: false
+                };
             } catch (e) {
                 console.warn(`Failed to load stats for ${hackathon.slug}:`, e);
+                // Mark this specific hackathon as having an error state
+                this.hackathonStats[hackathon.slug] = { error: true };
             }
         });
         await Promise.all(fetches);
@@ -78,23 +85,11 @@ class HackathonIndex {
         const endDate = new Date(hackathon.endTime);
 
         if (now < startDate) {
-            return {
-                status: 'upcoming',
-                label: 'Upcoming',
-                class: 'bg-blue-100 text-blue-800'
-            };
+            return { status: 'upcoming', label: 'Upcoming', class: 'bg-blue-100 text-blue-800' };
         } else if (now > endDate) {
-            return {
-                status: 'ended',
-                label: 'Ended',
-                class: 'bg-gray-100 text-gray-800'
-            };
+            return { status: 'ended', label: 'Ended', class: 'bg-gray-100 text-gray-800' };
         } else {
-            return {
-                status: 'ongoing',
-                label: 'Ongoing',
-                class: 'bg-green-100 text-green-800'
-            };
+            return { status: 'ongoing', label: 'Ongoing', class: 'bg-green-100 text-green-800' };
         }
     }
 
@@ -105,12 +100,11 @@ class HackathonIndex {
         const startDate = new Date(startTime);
         const endDate = new Date(endTime);
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        
         return `${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)}`;
     }
 
     /**
-     * Get time remaining for upcoming or ongoing hackathons
+     * Get time remaining
      */
     getTimeRemaining(hackathon) {
         const now = new Date();
@@ -125,16 +119,11 @@ class HackathonIndex {
             const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
             const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             
-            if (days > 0) {
-                return `${days} day${days !== 1 ? 's' : ''} remaining`;
-            } else if (hours > 0) {
-                return `${hours} hour${hours !== 1 ? 's' : ''} remaining`;
-            } else {
-                return 'Ending soon';
-            }
-        } else {
-            return 'Ended';
+            if (days > 0) return `${days} day${days !== 1 ? 's' : ''} remaining`;
+            if (hours > 0) return `${hours} hour${hours !== 1 ? 's' : ''} remaining`;
+            return 'Ending soon';
         }
+        return 'Ended';
     }
 
     /**
@@ -145,272 +134,173 @@ class HackathonIndex {
         const container = document.getElementById('hackathons-grid');
         const noHackathonsMsg = document.getElementById('no-hackathons');
         
-        let hackathons = this.config.hackathons;
+        let hackathons = [...(this.config.hackathons || [])];
         
-        // Filter hackathons
         if (filter !== 'all') {
-            hackathons = hackathons.filter(h => {
-                const status = this.getHackathonStatus(h);
-                return status.status === filter;
-            });
+            hackathons = hackathons.filter(h => this.getHackathonStatus(h).status === filter);
         }
 
         if (hackathons.length === 0) {
-            container.classList.add('hidden');
-            noHackathonsMsg.classList.remove('hidden');
+            if(container) container.classList.add('hidden');
+            if(noHackathonsMsg) noHackathonsMsg.classList.remove('hidden');
             return;
         }
 
-        container.classList.remove('hidden');
-        noHackathonsMsg.classList.add('hidden');
+        if(container) container.classList.remove('hidden');
+        if(noHackathonsMsg) noHackathonsMsg.classList.add('hidden');
 
-        // Sort hackathons: ongoing first, then upcoming, then ended
+        // Sort logic
         hackathons.sort((a, b) => {
-            const statusA = this.getHackathonStatus(a);
-            const statusB = this.getHackathonStatus(b);
-            
             const statusOrder = { ongoing: 0, upcoming: 1, ended: 2 };
-            const orderA = statusOrder[statusA.status];
-            const orderB = statusOrder[statusB.status];
-            
-            if (orderA !== orderB) {
-                return orderA - orderB;
-            }
-            
-            // If same status, sort by date (most recent first for ended, earliest first for others)
-            if (statusA.status === 'ended') {
-                return new Date(b.endTime) - new Date(a.endTime);
-            } else {
-                return new Date(a.startTime) - new Date(b.startTime);
-            }
+            const orderA = statusOrder[this.getHackathonStatus(a).status];
+            const orderB = statusOrder[this.getHackathonStatus(b).status];
+            if (orderA !== orderB) return orderA - orderB;
+            return statusOrder[this.getHackathonStatus(a).status] === 2 
+                ? new Date(b.endTime) - new Date(a.endTime) 
+                : new Date(a.startTime) - new Date(b.startTime);
         });
 
-        container.innerHTML = hackathons.map(hackathon => {
-            const status = this.getHackathonStatus(hackathon);
-            const dateRange = this.formatDateRange(hackathon.startTime, hackathon.endTime);
-            const timeRemaining = this.getTimeRemaining(hackathon);
-            const descriptionTrimmed = hackathon.description.trim();
-            const descriptionPreview = descriptionTrimmed.substring(0, 150);
-            const needsEllipsis = descriptionTrimmed.length > 150;
-            const stats = this.hackathonStats[hackathon.slug];
-
-            const statsHtml = stats ? `
+        if(container) {
+            container.innerHTML = hackathons.map(hackathon => {
+                const status = this.getHackathonStatus(hackathon);
+                const stats = this.hackathonStats[hackathon.slug];
+                
+                let statsHtml = '';
+                if (stats && stats.error) {
+                    // PROFESSIONAL ERROR STATE UI
+                    statsHtml = `
+                        <div class="p-3 mb-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> Data sync error. 
+                            <button onclick="location.reload()" class="underline font-bold hover:text-yellow-900 ml-1">Retry</button>
+                        </div>`;
+                } else if (stats) {
+                    statsHtml = `
                         <div class="grid grid-cols-3 gap-2 mb-4">
-                            <div class="text-center p-2 bg-gray-50 rounded-lg">
-                                <div class="text-lg font-bold text-red-600">${stats.participantCount.toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Participants</div>
-                            </div>
-                            <div class="text-center p-2 bg-gray-50 rounded-lg">
-                                <div class="text-lg font-bold text-red-600">${stats.totalPRs.toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Pull Requests</div>
-                            </div>
-                            <div class="text-center p-2 bg-gray-50 rounded-lg">
-                                <div class="text-lg font-bold text-red-600">${stats.mergedPRs.toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Merged PRs</div>
-                            </div>
-                            <div class="text-center p-2 bg-gray-50 rounded-lg">
-                                <div class="text-lg font-bold text-red-600">${stats.totalIssues.toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Issues</div>
-                            </div>
-                            <div class="text-center p-2 bg-gray-50 rounded-lg">
-                                <div class="text-lg font-bold text-red-600">${stats.repositories.toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Repositories</div>
-                            </div>
-                            <div class="text-center p-2 bg-gray-50 rounded-lg">
-                                <div class="text-lg font-bold text-red-600">${stats.daysActive.toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Days Active</div>
-                            </div>
-                        </div>
-                        ${stats.topContributors && stats.topContributors.length > 0 ? `
-                        <div class="flex items-center gap-2 mb-4">
-                            <span class="text-xs text-gray-500 whitespace-nowrap">Top contributors:</span>
-                            <div class="flex -space-x-2">
-                                ${stats.topContributors.map((c, i) => `
-                                <a href="${this.escapeHtml(c.url)}" target="_blank" rel="noopener noreferrer"
-                                   title="${this.escapeHtml(c.username)} — ${c.mergedCount} merged PR${c.mergedCount !== 1 ? 's' : ''}">
-                                    <img src="${this.escapeHtml(c.avatar)}" alt="${this.escapeHtml(c.username)}"
-                                         class="w-8 h-8 rounded-full border-2 border-white shadow-sm"
-                                         onerror="this.src='https://github.com/identicons/${this.escapeHtml(c.username)}.png'">
-                                </a>`).join('')}
-                            </div>
-                        </div>
-                        ` : ''}` : '';
+                            ${this.renderStatItem(stats.participantCount, 'Participants')}
+                            ${this.renderStatItem(stats.totalPRs, 'PRs')}
+                            ${this.renderStatItem(stats.mergedPRs, 'Merged')}
+                            ${this.renderStatItem(stats.totalIssues, 'Issues')}
+                            ${this.renderStatItem(stats.repositories, 'Repos')}
+                            ${this.renderStatItem(stats.daysActive, 'Active Days')}
+                        </div>`;
+                }
 
-            return `
-                <div class="hackathon-card bg-white rounded-lg shadow-lg overflow-hidden" data-status="${status.status}">
-                    ${hackathon.bannerImage ? `
-                    <div class="h-48 bg-cover bg-center relative" style="background-image: url('${hackathon.bannerImage}');">
-                        <div class="absolute top-4 right-4">
-                            <span class="px-3 py-1 rounded-full text-sm font-medium ${status.class}">
+                return `
+                    <div class="hackathon-card bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full transition-transform hover:scale-[1.02]">
+                        <div class="h-48 bg-red-700 relative flex items-center justify-center text-white p-6">
+                            ${hackathon.bannerImage ? 
+                                `<img src="${hackathon.bannerImage}" class="absolute inset-0 w-full h-full object-cover opacity-40">` : ''}
+                            <div class="relative z-10 text-center">
+                                <h3 class="text-xl font-bold leading-tight">${this.escapeHtml(hackathon.name)}</h3>
+                                <p class="text-xs mt-2 opacity-90 italic">${this.formatDateRange(hackathon.startTime, hackathon.endTime)}</p>
+                            </div>
+                            <span class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${status.class}">
                                 ${status.label}
                             </span>
                         </div>
-                    </div>
-                    ` : `
-                    <div class="bg-gradient-to-r from-red-600 to-red-800 p-6 text-white">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold flex-grow">${this.escapeHtml(hackathon.name)}</h3>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium ${status.class}">
-                                ${status.label}
-                            </span>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">${this.escapeHtml(hackathon.description)}</p>
+                            <div class="mt-auto">
+                                ${statsHtml}
+                                <a href="hackathon.html?slug=${encodeURIComponent(hackathon.slug)}" 
+                                   class="block w-full text-center px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
+                                   View Details <i class="fas fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
                         </div>
-                        <p class="text-sm opacity-90">
-                            <i class="far fa-calendar mr-1"></i>
-                            ${dateRange}
-                        </p>
-                        <p class="text-sm mt-1 opacity-90">
-                            <i class="far fa-clock mr-1"></i>
-                            ${timeRemaining}
-                        </p>
-                    </div>
-                    `}
-                    
-                    <div class="p-6">
-                        ${hackathon.bannerImage ? `
-                        <h3 class="text-xl font-bold mb-2 text-gray-900">${this.escapeHtml(hackathon.name)}</h3>
-                        ` : ''}
-                        ${hackathon.organizer ? `
-                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                            <i class="fas fa-users mr-2"></i>
-                            <span>Organized by ${this.escapeHtml(hackathon.organizer)}</span>
-                        </div>
-                        ` : ''}
-                        ${hackathon.bannerImage ? `
-                        <div class="flex items-center text-sm text-gray-600 mb-2">
-                            <i class="far fa-calendar mr-2"></i>
-                            <span>${dateRange}</span>
-                        </div>
-                        <div class="flex items-center text-sm text-gray-600 mb-4">
-                            <i class="far fa-clock mr-2"></i>
-                            <span>${timeRemaining}</span>
-                        </div>
-                        ` : ''}
-                        <p class="text-gray-700 mb-4 line-clamp-3">
-                            ${this.escapeHtml(descriptionPreview)}${needsEllipsis ? '...' : ''}
-                        </p>
-                        
-                        ${statsHtml}
-                        
-                        <a href="hackathon.html?slug=${encodeURIComponent(hackathon.slug)}" 
-                           class="block w-full text-center px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
-                            View Details
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-            `;
-        }).join('');
+                    </div>`;
+            }).join('');
+        }
+    }
+
+    renderStatItem(value, label) {
+        return `
+            <div class="text-center p-2 bg-gray-50 rounded-lg border border-gray-100">
+                <div class="text-md font-bold text-red-600">${value.toLocaleString()}</div>
+                <div class="text-[10px] uppercase tracking-tight text-gray-500">${label}</div>
+            </div>`;
     }
 
     /**
-     * Update API info section in footer with token status and rate limit details
+     * Update API info and handle Rate Limit Warnings
      */
     async updateApiInfo() {
         const infoEl = document.getElementById('github-api-info');
         if (!infoEl) return;
 
-        // Check if any hackathon has a token configured
         const hackathons = (this.config.hackathons || []);
-        const hasToken = hackathons.some(h => h.github && typeof h.github.token === 'string' && h.github.token.length > 0);
-
-        const tokenHtml = hasToken
-            ? '<span class="inline-flex items-center gap-1 text-green-600"><i class="fas fa-key"></i> GitHub Token: Active</span>'
-            : '<span class="inline-flex items-center gap-1 text-yellow-600"><i class="fas fa-exclamation-triangle"></i> No GitHub Token (unauthenticated – 60 req/hr limit)</span>';
-
-        // Fetch rate limit using the first hackathon's token if available.
-        // All hackathons sharing the same token will have the same rate limit bucket.
-        const baseURL = 'https://api.github.com';
-        const firstToken = hackathons.find(h => h.github && typeof h.github.token === 'string' && h.github.token.length > 0);
-        const token = firstToken ? firstToken.github.token : null;
+        const firstTokenObj = hackathons.find(h => h.github && h.github.token);
+        const token = firstTokenObj ? firstTokenObj.github.token : null;
+        
         const headers = { 'Accept': 'application/vnd.github.v3+json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        let rateLimitHtml = '';
         try {
-            const response = await fetch(`${baseURL}/rate_limit`, { headers });
+            const response = await fetch('https://api.github.com/rate_limit', { headers });
             if (response.ok) {
                 const data = await response.json();
                 const rl = data.rate;
-                const resetDate = new Date(rl.reset * 1000);
-                const resetTime = resetDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+                
+                // IF RATE LIMIT IS CRITICAL (Less than 5 remaining)
+                if (rl.remaining < 5) {
+                    this.showRateLimitBanner(new Date(rl.reset * 1000));
+                }
+
                 const pct = Math.round((rl.remaining / rl.limit) * 100);
                 const barColor = pct > 50 ? 'bg-green-500' : pct > 20 ? 'bg-yellow-500' : 'bg-red-500';
-                rateLimitHtml = `
-                    <span class="text-gray-400">|</span>
-                    <span>API calls: <strong>${rl.remaining}</strong> / ${rl.limit} remaining</span>
-                    <span class="inline-block w-16 h-2 rounded-full bg-gray-200 align-middle">
-                        <span class="block h-2 rounded-full ${barColor}" style="width:${pct}%"></span>
-                    </span>
-                    <span class="text-gray-400">|</span>
-                    <span>Resets at <strong>${resetTime}</strong></span>`;
+                
+                infoEl.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-400">
+                        <span class="${token ? 'text-green-500' : 'text-yellow-500'} font-medium">
+                            <i class="fas ${token ? 'fa-key' : 'fa-user-secret'}"></i> ${token ? 'Authenticated' : 'Unauthenticated'}
+                        </span>
+                        <span>|</span>
+                        <span>API: <strong>${rl.remaining}</strong> / ${rl.limit}</span>
+                        <div class="w-12 h-1.5 rounded-full bg-gray-700 overflow-hidden">
+                            <div class="h-full ${barColor}" style="width:${pct}%"></div>
+                        </div>
+                        <span>|</span>
+                        <span>Resets: ${new Date(rl.reset * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    </div>`;
             }
         } catch (e) {
-            console.warn('Failed to fetch rate limit:', e);
+            console.warn('Rate limit check failed', e);
         }
-
-        const lastUpdatedHtml = this.loadedAt
-            ? `<span class="text-gray-400">|</span><span>Updated <span id="last-updated-time" title="${this.loadedAt.toLocaleString()}">${this.timeAgo(this.loadedAt)}</span></span>`
-            : '';
-
-        infoEl.innerHTML = `<div class="flex flex-wrap items-center justify-center gap-2 text-sm">${tokenHtml}${rateLimitHtml}${lastUpdatedHtml}</div>`;
-        this.startLastUpdatedRefresh();
     }
 
-    /**
-     * Start periodic refresh of the "last updated" relative time in the footer
-     */
-    startLastUpdatedRefresh() {
-        const infoEl = document.getElementById('github-api-info');
-        if (!infoEl || !this.loadedAt) return;
-        if (this._lastUpdatedInterval) clearInterval(this._lastUpdatedInterval);
-        this._lastUpdatedInterval = setInterval(() => {
-            const timeEl = infoEl.querySelector('#last-updated-time');
-            if (timeEl) timeEl.textContent = this.timeAgo(this.loadedAt);
-        }, 60000);
+    showRateLimitBanner(resetTime) {
+        if (document.getElementById('rate-limit-banner')) return;
+        const banner = document.createElement('div');
+        banner.id = 'rate-limit-banner';
+        banner.className = 'bg-red-600 text-white text-center py-2 px-4 text-sm font-bold sticky top-0 z-50 animate-pulse';
+        banner.innerHTML = `
+            <i class="fas fa-exclamation-triangle mr-2"></i> 
+            GitHub API limit reached. Live stats are paused until ${resetTime.toLocaleTimeString()}. 
+            Please use a Personal Access Token to increase limits.
+        `;
+        document.body.prepend(banner);
     }
 
-    /**
-     * Return a human-readable relative time string (e.g. "just now", "3 minutes ago")
-     */
-    timeAgo(date) {
-        const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-        if (seconds < 60) return 'just now';
-        const minutes = Math.floor(seconds / 60);
-        if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
-        const hours = Math.floor(minutes / 60);
-        if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
-        const days = Math.floor(hours / 24);
-        return `${days} day${days !== 1 ? 's' : ''} ago`;
-    }
-
-    /**
-     * Escape HTML to prevent XSS
-     */
     escapeHtml(text) {
+        if (!text) return '';
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
 }
 
-/**
- * Filter hackathons by status
- */
-function filterHackathons(status) {
-    // Update button styles
+// Global filter function
+window.filterHackathons = (status) => {
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        if (btn.dataset.filter === status) {
-            btn.className = 'filter-btn px-3 sm:px-4 py-2 rounded-lg bg-red-600 text-white font-medium text-sm sm:text-base';
-        } else {
-            btn.className = 'filter-btn px-3 sm:px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 text-sm sm:text-base';
-        }
+        const isActive = btn.dataset.filter === status;
+        btn.classList.toggle('bg-red-600', isActive);
+        btn.classList.toggle('text-white', isActive);
+        btn.classList.toggle('bg-gray-200', !isActive);
+        btn.classList.toggle('text-gray-700', !isActive);
     });
-
-    // Re-render with filter
     window.hackathonIndex.renderHackathons(status);
-}
+};
 
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     window.hackathonIndex = new HackathonIndex(HACKATHONS_CONFIG);
     await window.hackathonIndex.init();

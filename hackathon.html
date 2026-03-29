@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; object-src 'none'; base-uri 'self'">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="hackathon-title">Hackathon Dashboard</title>
     <meta name="description" content="Track your hackathon progress with leaderboards, charts, and prizes">
+    <!-- build-stamp: tailwind-cdn-removed-20260329 -->
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Precompiled Tailwind CSS (production-safe; avoids the runtime CDN compiler) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -34,6 +36,17 @@
         .trophy-gold { color: #FFD700; }
         .trophy-silver { color: #C0C0C0; }
         .trophy-bronze { color: #CD7F32; }
+
+        /* Minimal typography styling (replaces Tailwind Typography plugin's `prose` class) */
+        .prose {
+            color: #111827; /* gray-900 */
+            line-height: 1.75;
+        }
+        .prose p { margin: 0.75rem 0; }
+        .prose ul, .prose ol { margin: 0.75rem 0; padding-left: 1.25rem; }
+        .prose li { margin: 0.25rem 0; }
+        .prose a { color: #2563eb; text-decoration: underline; }
+        .prose h1, .prose h2, .prose h3 { color: #111827; font-weight: 700; margin: 1rem 0 0.5rem; }
         
         /* Skeleton Loading Styles */
         .skeleton {
