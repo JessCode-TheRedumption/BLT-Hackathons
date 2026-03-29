@@ -185,11 +185,13 @@ class HackathonIndex {
                         </div>`;
                 }
 
+                const safeBannerImage = this.sanitizeImageUrl(hackathon.bannerImage);
+
                 return `
-                    <div class="hackathon-card bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full transition-transform hover:scale-[1.02]">
+                    <div class="hackathon-card bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full transform transition-transform hover:scale-105">
                         <div class="h-48 bg-red-700 relative flex items-center justify-center text-white p-6">
-                            ${hackathon.bannerImage ? 
-                                `<img src="${hackathon.bannerImage}" class="absolute inset-0 w-full h-full object-cover opacity-40">` : ''}
+                            ${safeBannerImage ? 
+                                `<img src="${safeBannerImage}" alt="" class="absolute inset-0 w-full h-full object-cover opacity-40">` : ''}
                             <div class="relative z-10 text-center">
                                 <h3 class="text-xl font-bold leading-tight">${this.escapeHtml(hackathon.name)}</h3>
                                 <p class="text-xs mt-2 opacity-90 italic">${this.formatDateRange(hackathon.startTime, hackathon.endTime)}</p>
@@ -199,7 +201,7 @@ class HackathonIndex {
                             </span>
                         </div>
                         <div class="p-6 flex-grow flex flex-col">
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">${this.escapeHtml(hackathon.description)}</p>
+                            <p class="text-gray-600 text-sm mb-4">${this.escapeHtml(hackathon.description)}</p>
                             <div class="mt-auto">
                                 ${statsHtml}
                                 <a href="hackathon.html?slug=${encodeURIComponent(hackathon.slug)}" 
@@ -216,8 +218,8 @@ class HackathonIndex {
     renderStatItem(value, label) {
         return `
             <div class="text-center p-2 bg-gray-50 rounded-lg border border-gray-100">
-                <div class="text-md font-bold text-red-600">${value.toLocaleString()}</div>
-                <div class="text-[10px] uppercase tracking-tight text-gray-500">${label}</div>
+                <div class="text-base font-bold text-red-600">${value.toLocaleString()}</div>
+                <div class="text-xs uppercase tracking-tight text-gray-500">${label}</div>
             </div>`;
     }
 
@@ -286,6 +288,26 @@ class HackathonIndex {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    escapeAttribute(text) {
+        return this.escapeHtml(text)
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    sanitizeImageUrl(url) {
+        if (!url) return '';
+        const raw = String(url).trim();
+        if (!raw) return '';
+
+        try {
+            const u = new URL(raw, window.location.href);
+            if (u.protocol !== 'http:' && u.protocol !== 'https:') return '';
+            return this.escapeAttribute(u.href);
+        } catch {
+            return '';
+        }
     }
 }
 
