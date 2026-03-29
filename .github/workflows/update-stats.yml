@@ -44,7 +44,9 @@ jobs:
             const HACKATHONS_CONFIG = eval(fs.readFileSync('js/hackathons-config.js', 'utf8') + '\nHACKATHONS_CONFIG');
             const config = JSON.parse(JSON.stringify(HACKATHONS_CONFIG));
             // Strip any tokens before writing to disk
-            config.hackathons.forEach(h => { if (h.github) h.github.token = ''; });
+            config.hackathons.forEach(h => {
+              if (h.github && Object.prototype.hasOwnProperty.call(h.github, 'token')) delete h.github.token;
+            });
             fs.writeFileSync('/tmp/hackathons-config-parsed.json', JSON.stringify(config));
             console.log('Parsed ' + config.hackathons.length + ' hackathon(s)');
           "

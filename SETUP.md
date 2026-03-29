@@ -44,13 +44,8 @@ github: {
 
 ### ⚙️ Optional Settings
 
-**GitHub Token (Recommended)**
-```javascript
-github: {
-    token: "ghp_your_token_here",  // Increases rate limit from 60 to 5000/hour
-    repositories: [...]
-}
-```
+**GitHub API rate limits**
+For static deployments (GitHub Pages), do not store tokens in `js/*.js` config files. To avoid rate limits in production, use the repo's GitHub Actions stats fetcher (`fetch_stats.py`) or a server-side proxy.
 
 **Prizes**
 ```javascript
@@ -76,24 +71,14 @@ sponsors: [
 ]
 ```
 
-## Step 3: Get a GitHub Token (Optional but Recommended)
+## Step 3: (Optional) Improve API reliability
 
-Without a token, you're limited to 60 API requests per hour. With a token, you get 5000!
+GitHub API is rate-limited for unauthenticated requests.
 
-1. Go to [GitHub Settings → Tokens](https://github.com/settings/tokens)
-2. Click "Generate new token" → "Generate new token (classic)"
-3. Give it a name like "Hackathon Dashboard"
-4. Select scope: **public_repo** (for public repositories only)
-5. Click "Generate token"
-6. Copy the token and paste it in your config:
-   ```javascript
-   github: {
-       token: "ghp_YourTokenHere123456789",
-       repositories: [...]
-   }
-   ```
-
-⚠️ **Important**: Never commit your token to a public repository! Consider using environment variables or GitHub Secrets for production.
+For production/static hosting, avoid placing tokens in frontend config files.
+Instead, use one of these approaches:
+- Use the repo's GitHub Actions stats fetcher (`fetch_stats.py`) to generate `hackathon-data/*.json` on a schedule.
+- Put authenticated GitHub API calls behind a small server-side proxy that injects the token from a secret store.
 
 ## Step 4: Test Locally
 

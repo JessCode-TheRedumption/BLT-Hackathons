@@ -43,11 +43,6 @@ const EXAMPLE_CONFIG = {
     // =====================
     
     github: {
-        // Personal access token (optional but highly recommended)
-        // Get one at: https://github.com/settings/tokens
-        // Required scopes: public_repo (for public repos)
-        token: "", // Add your token here
-        
         // Option 1: Track specific repositories
         // Format: "owner/repo-name"
         repositories: [
@@ -227,7 +222,7 @@ Examples:
 - "your-organization/your-project"
 
 Make sure repositories are:
-1. Public (or your token has access)
+1. Public
 2. Active (has pull requests)
 3. Correctly spelled
 
@@ -236,7 +231,6 @@ Instead of listing individual repositories, you can track all repositories
 in a GitHub organization by using the 'organization' field:
 
 github: {
-    token: "",
     organization: "OWASP-BLT"  // Track all repos in this org
 }
 
@@ -245,31 +239,17 @@ or when repositories are added/removed frequently.
 */
 
 // =====================
-// TOKEN SETUP GUIDE
+// TOKEN NOTE
 // =====================
 
 /*
-To get a GitHub token:
+Do not put GitHub tokens in this config.
 
-1. Go to: https://github.com/settings/tokens
-2. Click "Generate new token" → "Generate new token (classic)"
-3. Name it something like "Hackathon Dashboard"
-4. Set expiration (recommend: No expiration for long-term hackathons)
-5. Select scopes:
-   - ✅ public_repo (for public repositories)
-   - ✅ repo (if tracking private repositories)
-6. Click "Generate token"
-7. Copy the token (you won't see it again!)
-8. Paste it in the config:
-   
-   github: {
-       token: "ghp_your_token_here_abc123xyz789",
-       repositories: [...]
-   }
+This project runs as a static site, and any token embedded into frontend
+JavaScript/config can be accidentally exposed.
 
-⚠️ SECURITY WARNING:
-Never commit tokens to public repositories!
-For production, use environment variables or GitHub Secrets.
+If you need higher rate limits or access to private repos, use a server-side
+proxy (or GitHub Actions) to fetch and publish stats instead.
 */
 
 // =====================

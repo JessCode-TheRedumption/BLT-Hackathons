@@ -197,8 +197,7 @@ jobs:
             rules: \`\n                ${rulesValue.replace(/`/g, '\\`')}\n            \`,
             startTime: ${JSON.stringify(startTime)},
             endTime: ${JSON.stringify(endTime)},
-            github: {
-                token: "",${orgLine}
+            github: {${orgLine}
                 repositories: ${reposArray}
             },
             prizes: ${prizesArray},

@@ -4,25 +4,12 @@
  */
 
 class GitHubAPI {
-    constructor(token = null) {
-        this.token = token;
+    constructor() {
+        // This project runs as a static site. Do not use client-side GitHub tokens.
+        // If you need authenticated requests, use a server-side proxy.
         this.baseURL = 'https://api.github.com';
         this.cache = new Map();
         this.rateLimit = { limit: null, remaining: null, reset: null, used: null };
-
-        // Validate token format if provided
-        if (this.token && !this.isValidToken(this.token)) {
-            console.warn('GitHub token format may be invalid. Personal access tokens should start with "ghp_"');
-        }
-    }
-
-    /**
-     * Validate GitHub token format
-     */
-    isValidToken(token) {
-        // Basic validation: tokens should start with 'ghp_' for personal access tokens
-        // or 'github_pat_' for fine-grained tokens
-        return token.startsWith('ghp_') || token.startsWith('github_pat_') || token.startsWith('gho_');
     }
 
     /**
@@ -43,9 +30,6 @@ class GitHubAPI {
             'Accept': 'application/vnd.github.v3+json'
         };
 
-        if (this.token) {
-            headers['Authorization'] = `Bearer ${this.token}`;
-        }
 
         try {
             const response = await fetch(url, { headers });
@@ -285,7 +269,7 @@ class GitHubAPI {
                 console.warn(`⚠️ No repositories found for organization '${organization}'. This may indicate:`);
                 console.warn(`  - The organization does not exist or is misspelled`);
                 console.warn(`  - The organization has no public repositories`);
-                console.warn(`  - Your token lacks access to this organization's repositories`);
+                console.warn(`  - GitHub API restrictions (rate limits / CORS / network conditions)`);
                 console.warn(`  - CORS or network issues preventing API access`);
                 console.warn(`  Falling back to explicit repositories list.`);
                 
@@ -692,9 +676,6 @@ class GitHubAPI {
     async fetchRateLimit() {
         const url = `${this.baseURL}/rate_limit`;
         const headers = { 'Accept': 'application/vnd.github.v3+json' };
-        if (this.token) {
-            headers['Authorization'] = `Bearer ${this.token}`;
-        }
         try {
             const response = await fetch(url, { headers });
             if (response.ok) {

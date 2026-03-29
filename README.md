@@ -29,7 +29,6 @@ const HACKATHON_CONFIG = {
     startTime: "2024-01-01T00:00:00Z",
     endTime: "2024-01-31T23:59:59Z",
     github: {
-        token: "", // Optional: Add a GitHub token to avoid rate limits
         repositories: [
             "owner/repo1",
             "owner/repo2"
@@ -54,7 +53,6 @@ const HACKATHONS_CONFIG = {
             startTime: "2024-01-01T00:00:00Z",
             endTime: "2024-01-31T23:59:59Z",
             github: {
-                token: "",
                 repositories: ["owner/repo1"]
             }
         },
@@ -87,7 +85,6 @@ endTime: "2024-01-31T23:59:59Z"    // ISO 8601 format
 
 ```javascript
 github: {
-    token: "",  // Optional but recommended
     repositories: [
         "facebook/react",
         "microsoft/vscode"
@@ -95,13 +92,14 @@ github: {
 }
 ```
 
+Security note: do not put GitHub tokens in client-side config files for GitHub Pages/static deployments. Use the repo's GitHub Actions stats fetcher (`fetch_stats.py`) or a server-side proxy for authenticated requests.
+
 **New: Organization Support**
 
 You can now track all repositories in a GitHub organization instead of listing them individually:
 
 ```javascript
 github: {
-    token: "",
     organization: "OWASP-BLT",  // Track all repos in this organization
     repositories: []  // Can still add specific repos if needed
 }
@@ -109,10 +107,9 @@ github: {
 
 When an `organization` field is specified, the system will automatically fetch all repositories from that organization and track them for the hackathon. You can combine this with explicit repositories if needed.
 
-**GitHub Token (Recommended):**
-- Go to [GitHub Settings → Tokens](https://github.com/settings/tokens)
-- Create a new token with `public_repo` scope
-- Add it to the config to avoid API rate limits (60 requests/hour without token, 5000 with token)
+**Rate limits:**
+- GitHub API is rate-limited for unauthenticated requests.
+- For production, avoid putting tokens in client-side config. Prefer pre-fetched JSON via GitHub Actions (`fetch_stats.py`) or a server-side proxy.
 
 ### Prizes Configuration
 

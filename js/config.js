@@ -27,11 +27,6 @@ const HACKATHON_CONFIG = {
     
     // GitHub Configuration
     github: {
-        // Your GitHub personal access token (optional, but recommended to avoid rate limits)
-        // Create one at: https://github.com/settings/tokens
-        // Only needs 'public_repo' scope for public repositories
-        token: "", // Leave empty if you don't want to use a token
-        
         // List of repositories to track
         // Format: "owner/repo"
         repositories: [

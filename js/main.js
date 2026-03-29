@@ -6,7 +6,7 @@
 class HackathonDashboard {
     constructor(config) {
         this.config = config;
-        this.api = new GitHubAPI(config.github.token);
+        this.api = new GitHubAPI();
         this.chart = null;
         // Store resolved repositories (set during initialization)
         // Contains the merged list of explicit repositories and organization repositories

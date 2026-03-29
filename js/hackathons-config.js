@@ -32,8 +32,6 @@ const HACKATHONS_CONFIG = {
 
             // GitHub Configuration
             github: {
-                token: "",
-
                 // Organization field - all repos in this org will be tracked
                 organization: "OWASP-BLT",
                 // Fallback repositories in case organization fetch fails
@@ -95,9 +93,6 @@ const HACKATHONS_CONFIG = {
             
             // GitHub Configuration
             github: {
-                // Your GitHub personal access token (optional, but recommended to avoid rate limits)
-                token: "",
-                
                 // Organization field - all repos in this org will be tracked
                 organization: "OWASP-BLT",
                 // Fallback repositories in case organization fetch fails
@@ -144,7 +139,6 @@ const HACKATHONS_CONFIG = {
             startTime: "2025-05-11T00:00:00Z",
             endTime: "2025-06-01T23:59:59Z",
             github: {
-                token: "",
                 // Organization field - all repos in this org will be tracked
                 organization: "OWASP-BLT",
                 // Fallback repositories in case organization fetch fails
@@ -195,7 +189,6 @@ const HACKATHONS_CONFIG = {
             startTime: "2025-02-28T00:00:00Z",
             endTime: "2025-05-08T23:59:59Z",
             github: {
-                token: "",
                 // Organization field - all repos in this org will be tracked
                 organization: "OWASP-BLT",
                 // Fallback repositories in case organization fetch fails

@@ -230,12 +230,9 @@ class HackathonIndex {
         const infoEl = document.getElementById('github-api-info');
         if (!infoEl) return;
 
-        const hackathons = (this.config.hackathons || []);
-        const firstTokenObj = hackathons.find(h => h.github && h.github.token);
-        const token = firstTokenObj ? firstTokenObj.github.token : null;
-        
+        // Client-side GitHub tokens are intentionally not supported.
+        // If you need authenticated requests, use a server-side proxy.
         const headers = { 'Accept': 'application/vnd.github.v3+json' };
-        if (token) headers['Authorization'] = `Bearer ${token}`;
 
         try {
             const response = await fetch('https://api.github.com/rate_limit', { headers });
@@ -243,8 +240,8 @@ class HackathonIndex {
                 const data = await response.json();
                 const rl = data.rate;
                 
-                // IF RATE LIMIT IS CRITICAL (Less than 5 remaining)
-                if (rl.remaining < 5) {
+                // Only show the "limit reached" banner when the limit is actually exhausted.
+                if (rl.remaining === 0) {
                     this.showRateLimitBanner(new Date(rl.reset * 1000));
                 }
 
@@ -253,8 +250,8 @@ class HackathonIndex {
                 
                 infoEl.innerHTML = `
                     <div class="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-400">
-                        <span class="${token ? 'text-green-500' : 'text-yellow-500'} font-medium">
-                            <i class="fas ${token ? 'fa-key' : 'fa-user-secret'}"></i> ${token ? 'Authenticated' : 'Unauthenticated'}
+                        <span class="text-yellow-500 font-medium">
+                            <i class="fas fa-user-secret"></i> Unauthenticated
                         </span>
                         <span>|</span>
                         <span>API: <strong>${rl.remaining}</strong> / ${rl.limit}</span>
@@ -276,9 +273,8 @@ class HackathonIndex {
         banner.id = 'rate-limit-banner';
         banner.className = 'bg-red-600 text-white text-center py-2 px-4 text-sm font-bold sticky top-0 z-50 animate-pulse';
         banner.innerHTML = `
-            <i class="fas fa-exclamation-triangle mr-2"></i> 
-            GitHub API limit reached. Live stats are paused until ${resetTime.toLocaleTimeString()}. 
-            Please use a Personal Access Token to increase limits.
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            GitHub API rate limit reached. Some live requests may fail until ${resetTime.toLocaleTimeString()}.
         `;
         document.body.prepend(banner);
     }
