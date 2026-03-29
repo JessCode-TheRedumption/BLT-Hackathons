@@ -8,14 +8,12 @@ class HackathonIndex {
         this.config = config;
         this.currentFilter = 'all';
         this.hackathonStats = {};
-        this.loadedAt = null;
     }
 
     /**
      * Initialize the index page
      */
     async init() {
-        this.loadedAt = new Date();
         const global = this.config.global || {};
         
         // Update site title
@@ -152,11 +150,16 @@ class HackathonIndex {
         // Sort logic
         hackathons.sort((a, b) => {
             const statusOrder = { ongoing: 0, upcoming: 1, ended: 2 };
-            const orderA = statusOrder[this.getHackathonStatus(a).status];
-            const orderB = statusOrder[this.getHackathonStatus(b).status];
+
+            const statusA = this.getHackathonStatus(a).status;
+            const statusB = this.getHackathonStatus(b).status;
+
+            const orderA = statusOrder[statusA];
+            const orderB = statusOrder[statusB];
+
             if (orderA !== orderB) return orderA - orderB;
-            return statusOrder[this.getHackathonStatus(a).status] === 2 
-                ? new Date(b.endTime) - new Date(a.endTime) 
+            return orderA === 2
+                ? new Date(b.endTime) - new Date(a.endTime)
                 : new Date(a.startTime) - new Date(b.startTime);
         });
 

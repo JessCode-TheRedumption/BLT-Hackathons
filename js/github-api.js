@@ -269,8 +269,7 @@ class GitHubAPI {
                 console.warn(`⚠️ No repositories found for organization '${organization}'. This may indicate:`);
                 console.warn(`  - The organization does not exist or is misspelled`);
                 console.warn(`  - The organization has no public repositories`);
-                console.warn(`  - GitHub API restrictions (rate limits / CORS / network conditions)`);
-                console.warn(`  - CORS or network issues preventing API access`);
+                console.warn(`  - GitHub API restrictions (rate limits, CORS, or network issues)`);
                 console.warn(`  Falling back to explicit repositories list.`);
                 
                 // If we have explicit repos, use those
