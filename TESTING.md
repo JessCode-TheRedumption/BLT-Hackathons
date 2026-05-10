@@ -27,10 +27,10 @@ Before going live, test your hackathon dashboard to ensure everything works corr
    ```bash
    # Option 1: Python
    python -m http.server 8000
-   
+
    # Option 2: Node.js
    npx serve
-   
+
    # Option 3: PHP
    php -S localhost:8000
    ```

@@ -1,129 +1,129 @@
 {
-  "participantCount": 184,
-  "totalPRs": 2565,
-  "mergedPRs": 1620,
-  "totalIssues": 825,
-  "repositories": 53,
+  "participantCount": 209,
+  "totalPRs": 2736,
+  "mergedPRs": 1702,
+  "totalIssues": 858,
+  "repositories": 56,
   "topContributors": [
     {
       "username": "Nachiket-Roy",
       "avatar": "https://avatars.githubusercontent.com/u/204239697?v=4",
       "url": "https://github.com/Nachiket-Roy",
-      "mergedCount": 70
+      "mergedCount": 71
     },
     {
       "username": "mdkaifansari04",
       "avatar": "https://avatars.githubusercontent.com/u/117475603?v=4",
       "url": "https://github.com/mdkaifansari04",
-      "mergedCount": 56
+      "mergedCount": 57
     },
     {
       "username": "Pritz395",
       "avatar": "https://avatars.githubusercontent.com/u/146115505?v=4",
       "url": "https://github.com/Pritz395",
-      "mergedCount": 39
+      "mergedCount": 40
     }
   ],
   "recentPRs": [
     {
-      "title": "fix: implement ISO-8601 timestamps in health and review endpoints",
-      "url": "https://github.com/OWASP-BLT/BLT-Toasty/pull/40",
-      "username": "JessCode-TheRedumption",
-      "avatar": "https://avatars.githubusercontent.com/u/234758609?v=4",
+      "title": "Fix GraphQL batch refresh normalization issues",
+      "url": "https://github.com/OWASP-BLT/BLT-Leaf/pull/305",
+      "username": "Ontiomacer",
+      "avatar": "https://avatars.githubusercontent.com/u/96743995?v=4",
       "state": "open",
-      "created_at": "2026-03-28T13:41:09Z",
+      "created_at": "2026-05-09T17:40:38Z",
       "merged_at": null,
-      "repository": "OWASP-BLT/BLT-Toasty"
+      "repository": "OWASP-BLT/BLT-Leaf"
     },
     {
-      "title": "security(cors): default JSON responses to no CORS; allow wildcard only for GET /health",
-      "url": "https://github.com/OWASP-BLT/BLT-Pool/pull/103",
-      "username": "Rudrawhy",
-      "avatar": "https://avatars.githubusercontent.com/u/154898503?v=4",
-      "state": "open",
-      "created_at": "2026-03-28T13:22:43Z",
-      "merged_at": null,
-      "repository": "OWASP-BLT/BLT-Pool"
-    },
-    {
-      "title": "Removing Ahmed from Mentor list in Hackathon",
-      "url": "https://github.com/OWASP-BLT/BLT-Hackathons/pull/85",
+      "title": "Revise security patterns and refactor tests for improved practices",
+      "url": "https://github.com/OWASP-BLT/BLT-Preflight/pull/24",
       "username": "S3DFX-CYBER",
       "avatar": "https://avatars.githubusercontent.com/u/213652949?v=4",
+      "state": "open",
+      "created_at": "2026-05-09T13:45:40Z",
+      "merged_at": null,
+      "repository": "OWASP-BLT/BLT-Preflight"
+    },
+    {
+      "title": "fix : add etag migration",
+      "url": "https://github.com/OWASP-BLT/BLT-Leaf/pull/304",
+      "username": "Ontiomacer",
+      "avatar": "https://avatars.githubusercontent.com/u/96743995?v=4",
+      "state": "open",
+      "created_at": "2026-05-08T12:45:23Z",
+      "merged_at": null,
+      "repository": "OWASP-BLT/BLT-Leaf"
+    },
+    {
+      "title": "Fix/navbar consistency static pages",
+      "url": "https://github.com/OWASP-BLT/BLT-Leaf/pull/303",
+      "username": "Ontiomacer",
+      "avatar": "https://avatars.githubusercontent.com/u/96743995?v=4",
+      "state": "open",
+      "created_at": "2026-05-07T15:54:32Z",
+      "merged_at": null,
+      "repository": "OWASP-BLT/BLT-Leaf"
+    },
+    {
+      "title": "fix: synchronize theme toggle (dark/white) behavior across static pages",
+      "url": "https://github.com/OWASP-BLT/BLT-Leaf/pull/302",
+      "username": "Ontiomacer",
+      "avatar": "https://avatars.githubusercontent.com/u/96743995?v=4",
+      "state": "open",
+      "created_at": "2026-05-07T13:44:04Z",
+      "merged_at": null,
+      "repository": "OWASP-BLT/BLT-Leaf"
+    },
+    {
+      "title": "fix: add missing site favicon to head",
+      "url": "https://github.com/OWASP-BLT/BLT-Jobs/pull/85",
+      "username": "c0d3h01",
+      "avatar": "https://avatars.githubusercontent.com/u/109863197?v=4",
       "state": "closed",
-      "created_at": "2026-03-28T12:33:51Z",
-      "merged_at": "2026-03-28T14:20:26Z",
-      "repository": "OWASP-BLT/BLT-Hackathons"
+      "created_at": "2026-05-06T13:39:37Z",
+      "merged_at": "2026-05-06T16:33:13Z",
+      "repository": "OWASP-BLT/BLT-Jobs"
     },
     {
-      "title": "Add beginner-friendly setup guide to README",
-      "url": "https://github.com/OWASP-BLT/BLT-API/pull/83",
-      "username": "rimjhim-codes",
-      "avatar": "https://avatars.githubusercontent.com/u/253708920?v=4",
+      "title": "Added myself for BLT-MCP",
+      "url": "https://github.com/OWASP-BLT/BLT-GSOC/pull/71",
+      "username": "Nachiket-Roy",
+      "avatar": "https://avatars.githubusercontent.com/u/204239697?v=4",
       "state": "open",
-      "created_at": "2026-03-28T11:12:41Z",
+      "created_at": "2026-05-06T12:53:16Z",
       "merged_at": null,
-      "repository": "OWASP-BLT/BLT-API"
+      "repository": "OWASP-BLT/BLT-GSOC"
     },
     {
-      "title": "a11y: add aria-labels to footer social icon links",
-      "url": "https://github.com/OWASP-BLT/BLT/pull/6095",
-      "username": "mkamrul9",
-      "avatar": "https://avatars.githubusercontent.com/u/96786626?v=4",
+      "title": "fix: remove invalid SRI hash blocking Font Awesome CSS",
+      "url": "https://github.com/OWASP-BLT/BLT-Leaf/pull/301",
+      "username": "Ontiomacer",
+      "avatar": "https://avatars.githubusercontent.com/u/96743995?v=4",
       "state": "closed",
-      "created_at": "2026-03-28T03:31:35Z",
-      "merged_at": null,
-      "repository": "OWASP-BLT/BLT"
+      "created_at": "2026-05-05T10:17:59Z",
+      "merged_at": "2026-05-06T19:02:42Z",
+      "repository": "OWASP-BLT/BLT-Leaf"
     },
     {
-      "title": "chore: delete unused index3 template",
-      "url": "https://github.com/OWASP-BLT/BLT/pull/6094",
-      "username": "mkamrul9",
-      "avatar": "https://avatars.githubusercontent.com/u/96786626?v=4",
+      "title": "Update volunteer mentors list with Manahil Afzal",
+      "url": "https://github.com/OWASP-BLT/BLT-GSOC/pull/70",
+      "username": "Manahil-Afzal",
+      "avatar": "https://avatars.githubusercontent.com/u/207878232?v=4",
       "state": "closed",
-      "created_at": "2026-03-28T01:35:28Z",
-      "merged_at": "2026-03-28T02:14:31Z",
-      "repository": "OWASP-BLT/BLT"
+      "created_at": "2026-05-05T07:33:33Z",
+      "merged_at": "2026-05-06T07:55:01Z",
+      "repository": "OWASP-BLT/BLT-GSOC"
     },
     {
-      "title": "ci: add set -euo pipefail to screenshot commit step",
-      "url": "https://github.com/OWASP-BLT/owasp-blt.github.io/pull/89",
-      "username": "Ankitsinghsisodya",
-      "avatar": "https://avatars.githubusercontent.com/u/118156935?v=4",
-      "state": "open",
-      "created_at": "2026-03-27T19:16:38Z",
-      "merged_at": null,
-      "repository": "OWASP-BLT/owasp-blt.github.io"
-    },
-    {
-      "title": "ci: skip Pages deployment when data.json has no meaningful changes",
-      "url": "https://github.com/OWASP-BLT/owasp-blt.github.io/pull/88",
-      "username": "Ankitsinghsisodya",
-      "avatar": "https://avatars.githubusercontent.com/u/118156935?v=4",
-      "state": "open",
-      "created_at": "2026-03-27T19:15:40Z",
-      "merged_at": null,
-      "repository": "OWASP-BLT/owasp-blt.github.io"
-    },
-    {
-      "title": "ci: add concurrency control to screenshot workflow",
-      "url": "https://github.com/OWASP-BLT/owasp-blt.github.io/pull/87",
-      "username": "Ankitsinghsisodya",
-      "avatar": "https://avatars.githubusercontent.com/u/118156935?v=4",
-      "state": "open",
-      "created_at": "2026-03-27T19:14:28Z",
-      "merged_at": null,
-      "repository": "OWASP-BLT/owasp-blt.github.io"
-    },
-    {
-      "title": "ci: add timeout-minutes to screenshot job",
-      "url": "https://github.com/OWASP-BLT/owasp-blt.github.io/pull/86",
-      "username": "Ankitsinghsisodya",
-      "avatar": "https://avatars.githubusercontent.com/u/118156935?v=4",
-      "state": "open",
-      "created_at": "2026-03-27T19:13:51Z",
-      "merged_at": null,
-      "repository": "OWASP-BLT/owasp-blt.github.io"
+      "title": "Add BLT Toasty and myself as an intern for OWASP BLT Internship Program",
+      "url": "https://github.com/OWASP-BLT/BLT-GSOC/pull/69",
+      "username": "ojaswa072",
+      "avatar": "https://avatars.githubusercontent.com/u/230836303?v=4",
+      "state": "closed",
+      "created_at": "2026-05-04T18:42:17Z",
+      "merged_at": "2026-05-05T18:41:51Z",
+      "repository": "OWASP-BLT/BLT-GSOC"
     }
   ]
 }

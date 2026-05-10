@@ -154,7 +154,7 @@ display: {
 Replace the gradient banner with a custom image by modifying `index.html`:
 
 ```html
-<div class="relative rounded-lg overflow-hidden mb-8 h-64" 
+<div class="relative rounded-lg overflow-hidden mb-8 h-64"
      style="background-image: url('images/banner.jpg'); background-size: cover;">
 ```
 
@@ -297,19 +297,19 @@ Inspired by [OWASP BLT](https://github.com/OWASP-BLT/BLT) hackathon functionalit
 
 ## ❓ FAQ
 
-**Q: How often does the leaderboard update?**  
+**Q: How often does the leaderboard update?**
 A: Data is cached for 5 minutes. Refresh the page to get the latest updates.
 
-**Q: Can I track private repositories?**  
+**Q: Can I track private repositories?**
 A: Yes, but you'll need a GitHub token with appropriate permissions.
 
-**Q: What counts as a valid contribution?**  
+**Q: What counts as a valid contribution?**
 A: Only merged pull requests created or merged during the hackathon period are counted.
 
-**Q: Are bot accounts excluded?**  
+**Q: Are bot accounts excluded?**
 A: Yes, accounts with "bot" in the name are automatically filtered out.
 
-**Q: Can I customize the design?**  
+**Q: Can I customize the design?**
 A: Absolutely! The HTML and CSS are fully customizable.
 
 ## 📞 Support
