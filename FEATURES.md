@@ -395,7 +395,7 @@ Insert tracking code in `index.html` before `</head>`:
 
 ## 💡 Feature Requests
 
-Have an idea for a new feature? 
+Have an idea for a new feature?
 - Open an issue on GitHub
 - Tag it with `enhancement`
 - Describe the use case
